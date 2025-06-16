@@ -175,7 +175,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ post, onReviewComplete }) => {
             </Box>
           )}
 
-          {post.ai_analysis && (
+          {post.ai_analysis && post.ai_analysis.reasoning && (
             <Box>
               <Typography variant="subtitle2" gutterBottom>
                 AI判定理由:
@@ -184,7 +184,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ post, onReviewComplete }) => {
                 {post.ai_analysis.reasoning}
               </Typography>
 
-              {post.ai_analysis.detected_issues.length > 0 && (
+              {post.ai_analysis.detected_issues && post.ai_analysis.detected_issues.length > 0 && (
                 <Box mt={1}>
                   <Typography variant="caption" display="block" gutterBottom>
                     検出された問題:
