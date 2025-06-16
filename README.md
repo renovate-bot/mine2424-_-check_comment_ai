@@ -33,6 +33,7 @@ npm run dev
 - **要件仕様書**: [docs/requirements.md](docs/requirements.md)
 - **統計分析機能ガイド**: [docs/ANALYTICS_GUIDE.md](docs/ANALYTICS_GUIDE.md)
 - **高度検索・フィルタリング機能ガイド**: [docs/SEARCH_FILTER_GUIDE.md](docs/SEARCH_FILTER_GUIDE.md)
+- **類似投稿参考表示機能ガイド**: [docs/SIMILAR_POSTS_GUIDE.md](docs/SIMILAR_POSTS_GUIDE.md)
 - **クイックAI分析ガイド**: [docs/QUICK_ANALYSIS_GUIDE.md](docs/QUICK_ANALYSIS_GUIDE.md)
 - **新規投稿作成ガイド**: [docs/CREATE_POST_GUIDE.md](docs/CREATE_POST_GUIDE.md)
 
@@ -54,6 +55,7 @@ npm run dev
 - ✅ **統計分析・グラフ**: 時系列チャート・リスク分布・ユーザー統計（Recharts使用）
 - ✅ **クイックAI分析**: 発見したコメントの即座AI判定ツール
 - ✅ **投稿シミュレーター**: テスト・デモ用投稿作成機能
+- ✅ **類似投稿参考表示**: 過去の判定事例に基づく一貫性のあるレビュー支援
 
 ### Advanced Features (実装済み)
 - ✅ **包括的検索**: キーワード・ユーザーID・作品名・AIスコア範囲・日付範囲
@@ -61,6 +63,7 @@ npm run dev
 - ✅ **リアルタイム更新**: 1分間隔での統計自動更新
 - ✅ **詳細ログ**: AI分析過程の完全追跡とエラーハンドリング
 - ✅ **レスポンシブデザイン**: モバイル・デスクトップ完全対応
+- ✅ **判定支援**: 類似投稿検索による一貫性のあるモデレーション
 
 ### Future Enhancements (Phase 2)
 - 🔄 画像解析機能（不適切画像・著作権侵害検出）

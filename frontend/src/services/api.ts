@@ -186,3 +186,147 @@ export const fetchEditorialFeedbackStats = async (): Promise<{
     rejected: rejectedRes.pagination.total,
   };
 };
+
+// 類似投稿検索
+export const fetchSimilarPosts = async (postId: number): Promise<{
+  target_post: {
+    id: number;
+    content: string;
+    manga_title: string;
+  };
+  similar_posts: Array<{
+    id: number;
+    content: string;
+    manga_title: string;
+    ai_score: number;
+    ai_analysis: any;
+    detected_risks: string[];
+    status: string;
+    final_decision: string;
+    decision_reason: string;
+    moderator_id: string;
+    created_at: string;
+    decision_at: string;
+  }>;
+  keywords_used: string[];
+}> => {
+  const response = await apiClient.get(`/moderation/similar-posts/${postId}`);
+  return response.data;
+};
+
+// ユーザー活動詳細フィルタリング
+export interface UserActivityFilter {
+  user_id?: string;
+  min_posts?: number;
+  max_posts?: number;
+  min_avg_score?: number;
+  max_avg_score?: number;
+  risk_type?: string;
+  status?: string;
+  date_from?: string;
+  date_to?: string;
+  sort_by?: string;
+  sort_order?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface UserActivity {
+  user_id: string;
+  post_count: number;
+  avg_score: number;
+  min_score: number;
+  max_score: number;
+  approved_count: number;
+  pending_count: number;
+  rejected_count: number;
+  harassment_count: number;
+  spoiler_count: number;
+  inappropriate_count: number;
+  brand_damage_count: number;
+  spam_count: number;
+  personal_info_count: number;
+  editorial_feedback_count: number;
+  first_post_date: string;
+  last_post_date: string;
+  manga_count: number;
+  manga_titles: string[];
+  activity_days: number;
+  posts_per_day: number;
+  risk_score: number;
+}
+
+export const fetchUserActivity = async (filters: UserActivityFilter = {}): Promise<{
+  users: UserActivity[];
+  pagination: { total: number; limit: number; offset: number };
+}> => {
+  const queryParams = new URLSearchParams();
+  
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      queryParams.append(key, value.toString());
+    }
+  });
+  
+  const response = await apiClient.get(`/moderation/user-activity?${queryParams.toString()}`);
+  return response.data;
+};
+
+// 特定ユーザーの詳細分析
+export interface UserDetailAnalysis {
+  user_id: string;
+  basic_stats: {
+    user_id: string;
+    total_posts: number;
+    avg_score: number;
+    min_score: number;
+    max_score: number;
+    approved_count: number;
+    pending_count: number;
+    rejected_count: number;
+    first_post_date: string;
+    last_post_date: string;
+    manga_count: number;
+    activity_days: number;
+  };
+  daily_activity: Array<{
+    date: string;
+    post_count: number;
+    avg_score: number;
+    approved_count: number;
+    pending_count: number;
+    rejected_count: number;
+  }>;
+  manga_activity: Array<{
+    manga_title: string;
+    post_count: number;
+    avg_score: number;
+    approved_count: number;
+    rejected_count: number;
+    first_post: string;
+    last_post: string;
+  }>;
+  risk_analysis: {
+    harassment_count: number;
+    spoiler_count: number;
+    inappropriate_count: number;
+    brand_damage_count: number;
+    spam_count: number;
+    personal_info_count: number;
+    editorial_feedback_count: number;
+  };
+  recent_posts: Array<{
+    id: number;
+    content: string;
+    manga_title: string;
+    status: string;
+    ai_score: number;
+    detected_risks: string[];
+    created_at: string;
+  }>;
+}
+
+export const fetchUserDetailAnalysis = async (userId: string, days = 30): Promise<UserDetailAnalysis> => {
+  const response = await apiClient.get(`/moderation/user-activity/${userId}?days=${days}`);
+  return response.data;
+};

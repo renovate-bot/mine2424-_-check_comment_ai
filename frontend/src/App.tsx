@@ -8,13 +8,14 @@ import EditorialFeedback from './pages/EditorialFeedback';
 import QuickAnalysis from './pages/QuickAnalysis';
 import CreatePost from './pages/CreatePost';
 import Analytics from './pages/Analytics';
+import UserAnalytics from './pages/UserAnalytics';
 
 const App: React.FC = () => {
   return (
     <Router>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
-        <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: '240px' }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: '120px' }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/review" element={<ReviewQueue />} />
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             <Route path="/quick-analysis" element={<QuickAnalysis />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/user-analytics" element={<UserAnalytics />} />
           </Routes>
         </Box>
       </Box>

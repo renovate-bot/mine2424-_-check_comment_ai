@@ -15,6 +15,12 @@ import {
   MenuItem,
   LinearProgress,
   Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Grid,
+  Paper,
+  CircularProgress,
 } from '@mui/material';
 import {
   CheckCircle as ApproveIcon,
@@ -22,9 +28,11 @@ import {
   Warning as WarningIcon,
   Person as PersonIcon,
   Schedule as TimeIcon,
+  ExpandMore as ExpandMoreIcon,
+  History as HistoryIcon,
 } from '@mui/icons-material';
-import { useMutation } from '@tanstack/react-query';
-import { Post, approvePost, rejectPost } from '../services/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Post, approvePost, rejectPost, fetchSimilarPosts } from '../services/api';
 
 interface ReviewCardProps {
   post: Post;
@@ -54,6 +62,13 @@ const RISK_LABELS: Record<string, string> = {
 const ReviewCard: React.FC<ReviewCardProps> = ({ post, onReviewComplete }) => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
+
+  // 類似投稿データを取得
+  const { data: similarData, isLoading: similarLoading } = useQuery({
+    queryKey: ['similar-posts', post.id],
+    queryFn: () => fetchSimilarPosts(post.id),
+    enabled: post.status === 'pending', // レビュー待ちの場合のみ取得
+  });
 
   const approveMutation = useMutation({
     mutationFn: () => approvePost(post.id, 'moderator_1'),
@@ -182,6 +197,92 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ post, onReviewComplete }) => {
                 </Box>
               )}
             </Box>
+          )}
+
+          {/* 類似投稿表示 */}
+          {post.status === 'pending' && (
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box display="flex" alignItems="center">
+                  <HistoryIcon sx={{ mr: 1, fontSize: 20 }} />
+                  <Typography variant="subtitle2">類似事例</Typography>
+                  {similarLoading && <CircularProgress size={16} sx={{ ml: 1 }} />}
+                  {similarData && similarData.similar_posts.length > 0 && (
+                    <Chip 
+                      label={`${similarData.similar_posts.length}件`} 
+                      size="small" 
+                      sx={{ ml: 1 }} 
+                    />
+                  )}
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {similarLoading ? (
+                  <Box display="flex" justifyContent="center" p={2}>
+                    <CircularProgress size={24} />
+                  </Box>
+                ) : similarData && similarData.similar_posts.length > 0 ? (
+                  <Box>
+                    <Typography variant="caption" color="textSecondary" display="block" mb={2}>
+                      検索キーワード: {similarData.keywords_used.join(', ')}
+                    </Typography>
+                    <Grid container spacing={1}>
+                      {similarData.similar_posts.map((similar, index) => (
+                        <Grid item xs={12} key={similar.id}>
+                          <Paper variant="outlined" sx={{ p: 2, mb: 1 }}>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                              <Typography variant="caption" color="textSecondary">
+                                投稿ID: {similar.id}
+                              </Typography>
+                              <Box display="flex" gap={1}>
+                                <Chip
+                                  label={`AI: ${(similar.ai_score * 100).toFixed(0)}%`}
+                                  size="small"
+                                  color={getRiskColor(similar.ai_score)}
+                                  variant="outlined"
+                                />
+                                <Chip
+                                  label={similar.status === 'approved' ? '承認' : '拒否'}
+                                  size="small"
+                                  color={similar.status === 'approved' ? 'success' : 'error'}
+                                />
+                              </Box>
+                            </Box>
+                            
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                              {similar.content.length > 100 
+                                ? `${similar.content.substring(0, 100)}...` 
+                                : similar.content
+                              }
+                            </Typography>
+                            
+                            {similar.manga_title && (
+                              <Typography variant="caption" color="textSecondary" display="block">
+                                作品: {similar.manga_title}
+                              </Typography>
+                            )}
+                            
+                            {similar.decision_reason && (
+                              <Typography variant="caption" color="textSecondary" display="block">
+                                判定理由: {similar.decision_reason}
+                              </Typography>
+                            )}
+                            
+                            <Typography variant="caption" color="textSecondary" display="block">
+                              判定日時: {formatDate(similar.decision_at || similar.created_at)}
+                            </Typography>
+                          </Paper>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="textSecondary" align="center">
+                    類似する過去の投稿が見つかりませんでした
+                  </Typography>
+                )}
+              </AccordionDetails>
+            </Accordion>
           )}
         </CardContent>
 

@@ -18,10 +18,11 @@ import {
   Assessment as QuickAnalysisIcon,
   PostAdd as CreatePostIcon,
   Edit as EditorialIcon,
+  People as PeopleIcon,
   Security as SecurityIcon,
 } from '@mui/icons-material';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const menuItems = [
   { text: 'ダッシュボード', icon: <DashboardIcon />, path: '/' },
@@ -30,6 +31,7 @@ const menuItems = [
   { text: 'クイックAI分析', icon: <QuickAnalysisIcon />, path: '/quick-analysis' },
   { text: '新規投稿作成', icon: <CreatePostIcon />, path: '/create-post' },
   { text: '分析', icon: <AnalyticsIcon />, path: '/analytics' },
+  { text: 'ユーザー活動分析', icon: <PeopleIcon />, path: '/user-analytics' },
 ];
 
 const Sidebar: React.FC = () => {
@@ -52,7 +54,7 @@ const Sidebar: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <SecurityIcon color="primary" />
           <Typography variant="h6" noWrap component="div">
-            AI Moderation
+            Monitor Comment AI
           </Typography>
         </Box>
       </Toolbar>
