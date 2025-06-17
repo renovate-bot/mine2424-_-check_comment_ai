@@ -124,13 +124,6 @@ coverage
 logs
 *.log
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-database.sqlite
-backend/database.sqlite
-
 # OS generated files
 .DS_Store
 .DS_Store?
